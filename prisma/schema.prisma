@@ -1,0 +1,63 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int       @id @default(autoincrement())
+  username String    @unique
+  password String
+  email    String    @unique
+  post     Post[]
+  comment  comment[]
+  like     like[]
+  dislike  dislike[]
+}
+
+model Post {
+  id            Int     @id @default(autoincrement())
+  title         String
+  contentString String
+  imgUrl        String?
+  user          User    @relation(fields: [userId], references: [id])
+  userId        Int
+}
+
+model comment {
+  id        Int     @id @default(autoincrement())
+  postId    Int
+  comment   String
+  imgUrl    String?
+  user      User    @relation(fields: [userId], references: [id])
+  userId    Int
+  like      like    @relation(fields: [likeId], references: [id])
+  likeId    Int
+  dislike   dislike @relation(fields: [dislikeId], references: [id])
+  dislikeId Int
+}
+
+// model report {
+//   id     Int @id @default(autoincrement())
+//   postId Int
+// }
+
+model like {
+  id      Int       @id @default(autoincrement())
+  user    User      @relation(fields: [userId], references: [id])
+  userId  Int
+  comment comment[]
+}
+
+model dislike {
+  id      Int       @id @default(autoincrement())
+  user    User      @relation(fields: [userId], references: [id])
+  userId  Int
+  comment comment[]
+}
